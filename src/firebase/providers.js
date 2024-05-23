@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup, updateProfile, signInWithEmailAndPassword } from "firebase/auth";
 import { FirebaseAuth } from "./config";
 
 
@@ -51,7 +51,7 @@ export const registerUserWithEmailPassword = async ({ email, password, displayNa
 
 
         return {
-            ok:true,
+            ok: true,
             photoURL, uid, email, displayName
         };
 
@@ -60,6 +60,33 @@ export const registerUserWithEmailPassword = async ({ email, password, displayNa
         return { ok: false, errorMessage: error.message };
     }
 
+}
 
+
+
+export const loginWithEmailPassword = async (email, password,) => {
+    const auth = getAuth();
+
+
+    try {
+
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        const { displayName, uid, photoURL } = result.user
+
+        console.log(result);
+
+        return { ok: true, photoURL, uid, displayName, email }
+
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        return {
+
+            ok:false,
+            errorMessage: error.message //esto viene del catch
+        }
+    }
 
 }

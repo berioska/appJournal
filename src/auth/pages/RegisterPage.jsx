@@ -1,10 +1,10 @@
 
 import { AuthLayout } from "../layout/AuthLayout";
 import { Link as RouterLink } from "react-router-dom"
-import { Grid, Typography, TextField, Button, Link } from '@mui/material'
+import { Grid, Typography, TextField, Button, Link, Alert } from '@mui/material'
 import { useForm } from "../../store/auth/hooks";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { StartCreatingUserWithEmailPassword } from "../../store/auth/thunks";
 
 
@@ -27,6 +27,10 @@ const formValidations = {
 
 
 export const RegisterPage = () => {
+
+    const { status, errorMessage } = useSelector(state => state.auth)
+
+    const isCheckingAuthentication = useMemo(() => status === 'checking', [status]); //esto devuelve un booleano
 
     const { displayName, password, email, onInputChange, formState,
         isFormValid, emailValid, passwordValid, displayNameValid } = useForm(formData, formValidations);
@@ -102,8 +106,17 @@ export const RegisterPage = () => {
 
                     <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
 
+                        <Grid item xs={12}
+                         display = {!!errorMessage ? '' : 'none'}  //si el valor es false, se oculta 
+                        >
+                            <Alert severity="error">
+                                {errorMessage}
+                            </Alert>
+                        </Grid>
+
                         <Grid item xs={12}>
                             <Button
+                                disabled={isCheckingAuthentication}
                                 variant='contained'
                                 fullWidth
                                 type="submit"
