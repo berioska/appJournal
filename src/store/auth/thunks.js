@@ -1,4 +1,4 @@
-import { loginWithEmailPassword, registerUserWithEmailPassword, singInWithGoogle } from "../../firebase/providers";
+import { loginWithEmailPassword, logoutFirebase, registerUserWithEmailPassword, singInWithGoogle } from "../../firebase/providers";
 import { checkingCredentials, logout, login } from "./authSlice";
 
 
@@ -6,7 +6,7 @@ import { checkingCredentials, logout, login } from "./authSlice";
 
 export const checkingAuthentication = (email, password) => {
 
-    return async (dispatch) => {
+    return async(dispatch) => {
 
         dispatch(checkingCredentials()); //esto cambiara a checking
         console.log('me despachaste');
@@ -16,18 +16,20 @@ export const checkingAuthentication = (email, password) => {
 
 export const startGoogleSingIn = () => {
 
-    return async (dispatch) => {
-        console.log('hola')
+    return async(dispatch) => {
+
 
         dispatch(checkingCredentials()); //esto cambiara a checking
 
-        const result = await singInWithGoogle(); //espero la respuesta de mi autenticacion 
+        const { displayName, photoURL, email, uid, ok } = await singInWithGoogle(); //espero la respuesta de mi autenticacion 
 
-        if (!result.ok) return dispatch(logout(result.errorMessage)); // si falla hace logout
+        if (!ok) return dispatch(logout(result.errorMessage)); // si falla hace logout
 
-        dispatch(login(result)); // si es exitosa
+        const newUser = { displayName, photoURL, uid, email, ok }
+        
+        dispatch(login(newUser)); // si es exitosa
 
-        console.log({ result }); // el resultado puede ser ok o no
+        console.log(newUser); // el resultado puede ser ok o no
 
     };
 };
@@ -35,13 +37,11 @@ export const startGoogleSingIn = () => {
 
 export const StartCreatingUserWithEmailPassword = ({ email, password, displayName }) => {
 
-    return async (dispatch) => {
+    return async(dispatch) => {
 
         dispatch(checkingCredentials()); //cambia el status a checking
 
         const { ok, photoURL, uid, errorMessage } = await registerUserWithEmailPassword({ email, password, displayName });
-
-
 
         if (!ok) return dispatch(logout({ errorMessage }));
 
@@ -53,7 +53,7 @@ export const StartCreatingUserWithEmailPassword = ({ email, password, displayNam
 
 export const startLoginWithEmailPassword = (email, password) => { //esto viene del submit
 
-    return async (dispatch) => {
+    return async(dispatch) => {
 
         dispatch(checkingCredentials()); // lo pasa a checking
 
@@ -64,4 +64,15 @@ export const startLoginWithEmailPassword = (email, password) => { //esto viene d
         dispatch(login({ email, displayName, uid, photoURL })); //actualiza el estado con el usuario logueado
 
     }
+}
+
+export const startLogout = () => {
+
+    return async(dispatch) => {
+
+        await logoutFirebase();
+
+    }
+
+
 }

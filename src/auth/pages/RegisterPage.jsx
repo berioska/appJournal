@@ -2,7 +2,7 @@
 import { AuthLayout } from "../layout/AuthLayout";
 import { Link as RouterLink } from "react-router-dom"
 import { Grid, Typography, TextField, Button, Link, Alert } from '@mui/material'
-import { useForm } from "../../store/auth/hooks";
+import { useForm } from "../../hooks";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StartCreatingUserWithEmailPassword } from "../../store/auth/thunks";
@@ -57,7 +57,7 @@ export const RegisterPage = () => {
     return (
         <AuthLayout title={"Crear cuenta"}  >
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="animate__animated animate__fadeIn animate__faster">
                 <Grid container>
                     <Grid item xs={12} sx={{ mb: 1 }}>
                         <TextField

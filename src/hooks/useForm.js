@@ -12,6 +12,12 @@ export const useForm = (initialForm = {}, formValidations = {}) => { //recibe un
 
     }, [formState])// se llamara cada vez que cambie el estado de mi formulario, es decir, los valores
 
+    useEffect(() => {
+
+        setFormState(initialForm);
+
+    },[initialForm])
+
     const onInputChange = ({ target }) => {
 
         const { name, value } = target;

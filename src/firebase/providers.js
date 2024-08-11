@@ -12,6 +12,8 @@ export const singInWithGoogle = async () => {
         const result = await signInWithPopup(FirebaseAuth, goolgeProvider);
         const credentials = GoogleAuthProvider.credentialFromResult(result);
 
+      
+
         const { displayName, photoURL, email, uid } = result.user; // todo esto lo extrae de mi autenticacion
 
         return {
@@ -89,4 +91,9 @@ export const loginWithEmailPassword = async (email, password,) => {
         }
     }
 
+}
+
+export const logoutFirebase = async() => {
+
+    return await FirebaseAuth.signOut();
 }

@@ -10,7 +10,7 @@ export const JournalLayout = ({ children}) => {
 
     return (
 
-        <Box sx={{ diplay: 'flex', }}>
+        <Box sx={{ diplay: 'flex', }} className="animate__animated animate__fadeIn animate__faster">
 
             <NavBar drawerWidth = {drawerWidth}   />
             <SideBar drawerWidth={drawerWidth}/>
@@ -18,7 +18,7 @@ export const JournalLayout = ({ children}) => {
             <Box
                 component='main'
                 sx={{ flexGrow: 1, p: 3,   ml: { sm: ` ${drawerWidth}px` }}}
-                noWrap
+             
             >
                 <Toolbar/>
                 {/* {toolbar} */}

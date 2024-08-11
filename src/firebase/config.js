@@ -18,4 +18,4 @@ const firebaseConfig = {
 // Initialize Firebase
 export const FirebaseApp = initializeApp(firebaseConfig); //inicializa una app con firebase con un sdk desde firebase
 export const FirebaseAuth = getAuth(FirebaseApp); // 
-export const FirebaseDB = getFirestore(FirebaseApp);
+export const FirebaseDB = getFirestore(FirebaseApp); //me trae la base de datos de mi app en firebase
