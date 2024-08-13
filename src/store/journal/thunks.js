@@ -5,31 +5,31 @@ import { addNewEmptyNote, setActiveNote, savingNewNote, setNotes, setSaving, set
 
 
 export const startLoadingNotes = () => { //esto se dispara en mi checkAuth, despues de auntenticar el usuario
-    
-    return async(dispatch, getState) => {
 
-        const {uid} = getState().auth;
+    return async (dispatch, getState) => {
 
-        if(!uid) throw new Error('el uid no existe'); 
+        const { uid } = getState().auth;
+
+        if (!uid) throw new Error('el uid no existe');
 
 
         const collectionNotes = collection(FirebaseDB, `${uid}/journal/notes`); //con esto accedo a esa coleccion
         const doc = await getDocs(collectionNotes);
 
-        
-        
+
+
         const notes = [];
 
-        doc.forEach(doc =>{
-            
+        doc.forEach(doc => {
+
             notes.push({ id: doc.id, ...doc.data() });
-            
+
         });
 
-        
+
+        console.log(notes);
         dispatch(setNotes(notes));
-       // console.log(notes);
-        
+
     }
 }
 
@@ -56,7 +56,7 @@ export const startNewNote = () => {
         //doc me permite acceder a mi proyecto. 
 
         await setDoc(newDoc, newNote); // envia la nueva nota a la base del usuario 
-      
+
 
 
         newNote.id = newDoc.id //le agrego el id a  mi nueva nota 
@@ -77,34 +77,45 @@ export const startNewNote = () => {
 }
 
 
- export const startSaveNote = () => { //recibe el id de la nota activa
+export const startSaveNote = () => { //recibe el id de la nota activa
 
-    return async( dispatch, getState ) => {
+    return async (dispatch, getState) => {
 
-        dispatch(setSaving());
+        dispatch(setSaving(true));
 
-        const {uid} = getState().auth;
+        const { uid } = getState().auth;
 
-        const {active:note} = getState().journal; //esta es la nota activa 
+        const { active: note } = getState().journal; //esta es la nota activa 
 
-        const newDate = new Date().getTime();
-
-        const updateNote = {...note};
+        const updateNote = { ...note };
         delete updateNote.id;
+
+
+        const currentNote = doc(FirebaseDB, `${uid}/journal/notes/${note.id}`); //accedo a la nota activa
+
+        await setDoc(currentNote, { ...updateNote, date: new Date().getTime() });
+
+
+        const collectionNotes = collection(FirebaseDB, `${uid}/journal/notes`); //con esto accedo a esa coleccion
+        const document = await getDocs(collectionNotes);
+
+        const notes = [];
+
+        document.forEach(doc => {
+
+            notes.push({ id: doc.id, ...doc.data() });
+
+        });
+
+        dispatch(setUpdateNote(notes)); //actualiza las notas
+        dispatch(setSaving(false));
         
-
-        const currentNote = doc(FirebaseDB,`${uid}/journal/notes/${note.id}`);
-
-        await setDoc(currentNote, {updateNote} );
-        
-       console.log({...updateNote});
-       setUpdateNote( {...updateNote, id:note.id} );
-
     }
-      
-        
 
-} 
 
-      
-   
+
+
+}
+
+
+

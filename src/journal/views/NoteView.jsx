@@ -6,6 +6,8 @@ import { useForm } from '../../hooks/useForm';
 import { useEffect, useMemo } from 'react';
 import { setActiveNote } from '../../store/journal/journalSlice';
 import { startSaveNote } from '../../store/journal';
+import  Swal  from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css';
 
 
 
@@ -13,9 +15,9 @@ export const NoteView = () => {
 
     const dispatch = useDispatch();
 
-    const {active:note } = useSelector(state => state.journal); //esta es la nota activa
+    const { active: note, messagedSaved, isSaving } = useSelector(state => state.journal); //esta es la nota activa
 
-    const {id, body, title, date, formState, onInputChange} = useForm(note); // se le pasa la not activa
+    const { id, body, title, date, formState, onInputChange } = useForm(note); // se le pasa la not activa
     //en este caso form state es la nota, y como tiene el evento onchange se actualiza cada vez. 
     const dateString = useMemo(() => {
 
@@ -28,13 +30,21 @@ export const NoteView = () => {
 
         dispatch(setActiveNote(formState))
 
-    },[formState]); //le esta mandando la nota actualizada  a la nota activa
+    }, [formState]); //le esta mandando la nota actualizada  a la nota activa
 
+    useEffect(() => {
+
+        if (messagedSaved.length > 0) {
+            
+        Swal.fire('Nota actualizada', messagedSaved, 'success');
+
+        }
+
+    }, [messagedSaved]) // esto se disparara cuando cambie el mensaje, pero cuando cambie a palabras. 
 
     const onSaveNote = () => {
 
-     dispatch(startSaveNote());
-
+        dispatch(startSaveNote());
     }
 
 
@@ -42,14 +52,17 @@ export const NoteView = () => {
         <Grid container direction='row' justifyContent='space-between' sx={{ mb: 1 }} className="animate__animated animate__fadeIn animate__faster">
             <Grid item>
                 <Typography fontSize={39} fontWeight='light'>
-                   {dateString}
+                    {dateString}
                 </Typography>
             </Grid>
             <Grid item>
-                <Button color='primary' sx={{ padding: 2 }}
-                onClick={onSaveNote} 
+                <Button 
+                disabled = {isSaving}
+                color='primary' 
+                sx={{ padding: 2 }}
+                onClick={onSaveNote}
                 >
-                    
+
                     <SaveOutlined sx={{ mr: 1, fontSize: 30 }} />
                     Guardar
                 </Button>
@@ -63,10 +76,10 @@ export const NoteView = () => {
                     placeholder='Ingrese un titulo'
                     label='Título'
                     sx={{ border: 'none', mb: 1 }}
-                    name = 'title'
-                    value = {title}       
-                    onChange={onInputChange}         
-                    />
+                    name='title'
+                    value={title}
+                    onChange={onInputChange}
+                />
 
                 <TextField
                     type='text'
@@ -76,8 +89,8 @@ export const NoteView = () => {
                     placeholder='Qué sucedió hoy?'
                     sx={{ border: 'none', mb: 1 }}
                     minRows={5}
-                    name = 'body'
-                    value = {body}
+                    name='body'
+                    value={body}
                     onChange={onInputChange}
                 />
             </Grid>
